@@ -1,46 +1,46 @@
 ---
-- name: Install Git
+- name: 'Install Git'
   ansible.builtin.package:
-    name: git
-    state: present
+    name: 'git'
+    state: 'present'
     cache_valid_time: 3600
 
-- name: Make sure git-shell is in /etc/shells
+- name: 'Make sure git-shell is in /etc/shells'
   ansible.builtin.lineinfile:
-    dest: /etc/shells
-    line: /usr/bin/git-shell
+    dest: '/etc/shells'
+    line: '/usr/bin/git-shell'
 
-- name: Create git user
+- name: 'Create git user'
   ansible.builtin.user:
-    name: git
-    comment: git
+    name: 'git'
+    comment: 'git'
     create_home: yes
-    home: "{{ gitserver_git_homedir }}"
-    shell: /usr/bin/git-shell
+    home: '{{ gitserver_git_homedir }}'
+    shell: '/usr/bin/git-shell'
     system: yes
 
-- name: Add gitserver_user_pub_key to git user
+- name: 'Add gitserver_user_pub_key to git user'
   ansible.builtin.authorized_key:
-    user: git
-    state: present
-    key: "{{ gitserver_user_pub_key }}"
+    user: 'git'
+    state: 'present'
+    key: '{{ gitserver_user_pub_key }}'
   when: gitserver_user_pub_key is defined
 
-- name: Create /srv/git/git-shell-commands
+- name: 'Create /srv/git/git-shell-commands'
   ansible.builtin.file:
-    path: "{{ gitserver_git_homedir }}/git-shell-commands"
-    mode: '0755'
-    state: directory
+    path: '{{ gitserver_git_homedir }}/git-shell-commands'
+    mode: 0755
+    state: 'directory'
 
-- name: Populate /srv/git/git-shell-commands
+- name: 'Populate /srv/git/git-shell-commands'
   ansible.builtin.copy:
-    src: files/git-shell-commands/{{ item }}
-    dest: "{{ gitserver_git_homedir }}/git-shell-commands/{{ item }}"
-    mode: '0755'
+    src: 'files/git-shell-commands/{{ item }}'
+    dest: '{{ gitserver_git_homedir }}/git-shell-commands/{{ item }}'
+    mode: 0755
   loop:
     - init
     - post_recv
     - list
 
-- include_tasks: gitweb.yml
+- include_tasks: 'gitweb.yml'
   when: gitserver_enable_gitweb | bool
