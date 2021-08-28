@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+# XXX: Don't enable post-receive hook if no Jenkinsfile
+
+repo=$1
+if [[ "$repo" != *.git ]]; then
+    repo="${repo}.git"
+fi
+if [[ ! -d "$HOME/$repo" ]]; then
+    echo "$repo does not exist"
+    exit 1
+fi
+echo "Creating post-receive hook"
+(
+cd "$HOME/$repo"
+cat <<EOF > "$HOME/$repo/.git/hooks/post-receive"
+GIT_REPO_URL=ssh://git@git.lan:2222/home/git/`pwd | sed 's:.*\/::'`
+curl http://jenkins.lan:8080/git/notifyCommit?url=$GIT_REPO_URL
+EOF
+chmod 755 "$HOME/$repo/.git/hooks/post-receive"
+chown -R git:git "$repo"
+)
+

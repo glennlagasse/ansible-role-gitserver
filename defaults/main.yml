@@ -1,0 +1,7 @@
+---
+gitserver_git_homedir: /srv/git
+
+gitserver_enable_gitweb: False
+gitserver_gitweb_pkgs:
+  - gitweb
+  - highlight

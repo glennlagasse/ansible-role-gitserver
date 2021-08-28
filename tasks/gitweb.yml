@@ -1,0 +1,23 @@
+---
+- name: Install gitweb
+  ansible.builtin.package:
+    name: "{{ gitserver_gitweb_pkgs }}"
+    state: present
+    cache_valid_time: 3600
+
+- name: Point gitweb at git repo dir
+  ansible.builtin.lineinfile:
+    regex: $projectroot = "/var/lib/git";
+    dest: /etc/gitweb.conf
+    line: $projectroot = "{{ gitserver_git_homedir }}";
+
+- name: Enable syntax-highlighting in gitweb
+  ansible.builtin.lineinfile:
+    dest: /etc/gitweb.conf
+    line: $feature{'highlight'}{'default'} = [1];
+
+- name: Enable the Apache2 cgid module
+  community.general.apache2_module:
+    state: present
+    name: cgid
+  notify: restart apache2
