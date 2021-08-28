@@ -10,7 +10,7 @@ p=$(echo "$1" | sed 's/\.git$\|$/.git/i')
 
 [ -e "$p" ] && echo "$p is already a file or directory." && exit 1
 
-git init --bare "$p"
+git init --bare --initial-branch=main "$p"
 
 echo "Glenn Lagasse" > "owner"
 #echo "http://git.lan/${p%.git}" > "url"
